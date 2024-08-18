@@ -2,20 +2,36 @@ package models;
 
 import models.Enums.TipoEnvase;
 
+import java.time.LocalDate;
+
 public class Envasado extends Producto{
 
+    private static int contador = 1;
     //region atributos
     private TipoEnvase tipoEnvase;
     private Boolean esImportado;
+
+    private LocalDate fechaVencimiento;
+    private float calorias;
+
     //endregion
 
     //region constructores
-    public Envasado(String codigo, String descripcion, int stock, float precio, float porcentajeGanancia,
-                    Boolean estaDisponible, TipoEnvase tipoEnvase, Boolean esImportado) {
-        super(codigo, descripcion, stock, precio, porcentajeGanancia, estaDisponible);
+
+    public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, TipoEnvase tipoEnvase,
+                    Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
+        super(descripcion, stock, precio, porcentajeGanancia);
         this.tipoEnvase = tipoEnvase;
         this.esImportado = esImportado;
+        this.fechaVencimiento = fechaVencimiento;
+        this.calorias = calorias;
+
+        super.setCodigo(generarCodigoProducto());
+
+        Envasado.contador++;
     }
+
+
     //endregion
 
     //region getters y setters
@@ -35,6 +51,13 @@ public class Envasado extends Producto{
         this.esImportado = esImportado;
     }
     //endregion
+
+
+    @Override
+    public String generarCodigoProducto() {
+        return "AB" + String.format("%03d", contador);
+    }
+
 
     @Override
     public String toString() {

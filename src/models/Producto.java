@@ -16,14 +16,24 @@ public abstract class Producto {
     public Producto() {
     }
 
+    public Producto(String descripcion, int stock, float precio,
+                    float porcentajeGanancia){
+//        this.codigo = codigo;
+        this.descripcion = descripcion;
+        this.stock = stock;
+        this.precio = precio;
+        this.porcentajeGanancia = porcentajeGanancia;
+        this.estaDisponible = true;
+
+    }
     public Producto(String codigo, String descripcion, int stock, float precio,
-                    float porcentajeGanancia, Boolean estaDisponible){
+                    float porcentajeGanancia){
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.stock = stock;
         this.precio = precio;
         this.porcentajeGanancia = porcentajeGanancia;
-        this.estaDisponible = estaDisponible;
+        this.estaDisponible = true;
 
     }
 
@@ -81,7 +91,15 @@ public abstract class Producto {
 
     //endregion
 
+    public abstract String generarCodigoProducto();
+
+//    public abstract String validarYFormatearCodigoProducto(String codigo);
+
+//    public abstract boolean validarSiExisteCodigoProducto(String codigo);
+
     //TODO: implementar equals y hashcode
+
+
 
     @Override
     public String toString() {
