@@ -1,6 +1,6 @@
 package models;
 
-import models.Enums.TipoAplicacion;
+import Enums.TipoAplicacion;
 
 public class Limpieza extends Producto{
 

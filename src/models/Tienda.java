@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Tienda {
 
@@ -8,7 +9,7 @@ public class Tienda {
     private String nombre;
     private int stockMax;
     private double saldoCaja;
-    private ArrayList<Producto> productosStock; //TODO: modificar nombre lista
+    private ArrayList<Producto> listaProductosStock;
 
     private ArrayList<String> listaProductosLimpieza; //Lista todos los productos de limpieza por su codigo
     private ArrayList<String> listaProductosEnvasados;
@@ -19,17 +20,17 @@ public class Tienda {
     //region Constructores
     public Tienda(){}
 
-    public Tienda(String nombre, int stockMax, double saldoCaja, ArrayList<Producto> productosStock) {
+    public Tienda(String nombre, int stockMax, double saldoCaja, ArrayList<Producto> listaProductosStock) {
         this.nombre = nombre;
         this.stockMax = stockMax;
         this.saldoCaja = saldoCaja;
-        this.productosStock = productosStock;
+        this.listaProductosStock = listaProductosStock;
     }
     public Tienda(String nombre, int stockMax, double saldoCaja) {
         this.nombre = nombre;
         this.stockMax = stockMax;
         this.saldoCaja = saldoCaja;
-        this.productosStock = productosStock;
+        this.listaProductosStock = listaProductosStock;
     }
     //endregion
 
@@ -59,38 +60,26 @@ public class Tienda {
         this.saldoCaja = saldoCaja;
     }
 
-    public ArrayList<Producto> getProductosStock() {
-        return productosStock;
+    public ArrayList<Producto> getListaProductosStock() {
+        return listaProductosStock;
     }
 
-    public void setProductosStock(ArrayList<Producto> productosStock) {
-        this.productosStock = productosStock;
+    public void setListaProductosStock(ArrayList<Producto> listaProductosStock) {
+        this.listaProductosStock = listaProductosStock;
     }
 
 
     //endregion
 
-    public float calcularImporteTotalProducto(int stock, float precio ){
-        return precio * stock;
-
-    }
-
-    public void verificarSaldoCaja(){
-
-    }
-
-    public void descontarSaldoCaja(float importe){
-        this.saldoCaja = saldoCaja - importe;
-
-    }
+    //region métodos de ALTA, BAJA, MODIFICACIÓN Y VENTA de productos
     public void agregarProducto(Producto productoNuevo) { //seria lo mismo que comprar Productos, estariamos agregando productos a la tienda
 
-        float importeTotalProducto = calcularImporteTotalProducto(productoNuevo.getStock(), productoNuevo.getPrecio());
+        float importeTotalProducto = productoNuevo.calcularImporteTotalProducto();
 
-        if(importeTotalProducto <= saldoCaja){
+        if(importeTotalProducto <= saldoCaja && !(excedeLimiteStockMaximo(productoNuevo.getStock()))){
 
             descontarSaldoCaja(importeTotalProducto);
-            this.productosStock.add(productoNuevo);
+            this.listaProductosStock.add(productoNuevo);
 
             if (productoNuevo instanceof Limpieza) {
                 this.listaProductosLimpieza.add(productoNuevo.getCodigo());
@@ -100,27 +89,183 @@ public class Tienda {
             }
             if(productoNuevo instanceof Envasado){
                 this.listaProductosEnvasados.add(productoNuevo.getCodigo());
-
             }
 
-        }else{
+        }else if(importeTotalProducto > saldoCaja){
             System.out.println("El producto no podrá ser agregado a la tienda por saldo insuficiente en la caja");
+        }else{
+            System.out.println("“No se pueden agregar nuevos productos a la tienda ya que se alcanzó el máximo de stock");
         }
-
-        verificarSaldoCaja();
 
 
     }
     public void eliminarProducto(){
     }
-
     public void modificarProducto(){}
 
-    public void mostrarListaProductos(){
+    public void venderProductos(ArrayList<Producto> productos){
+
+        float totalVenta = 0;
+
+        if(productos.size() < 1 || productos.size() >3){ //no cumple con cantidad requerida o excede cantidad de productos para vender
+            System.out.println("Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos");
+            //TODO: se podria agregar un excepcion aca, para que salga de ese metodo y no continue el codigo de abajo
+        }
+
+        for (Producto producto : productos) {
+            System.out.println(producto.getDescripcion());
+            System.out.println("Ingrese las unidades deseadas:");
+            int unidades = 0; //hardcodeado
+
+            if(venderProducto(producto.getCodigo(), unidades)){
+                imprimirDetalleLineaProducto(producto, unidades);
+                totalVenta = totalVenta + (producto.getPrecio() * unidades);
+
+            }
+
+        }
+
+        System.out.println("TOTAL VENTA: " + totalVenta);
+
     }
 
-    public void venderProducto(){}
+//    public void venderProducto(Producto producto){
+//
+////        boolean productoStockMenorAlSolicitado = false;
+////        int unidadesProducto = 0;
+////
+////        System.out.println("Producto " + producto.getDescripcion());
+////        System.out.println("Ingrese cantidad de unidades para el producto: ");
+////        //deberia hacer un scanner que tome todas las unidades ingresadas por cada producto
+////
+////        if( esUnidadValida(unidadesProducto) && (unidadesProducto < producto.getStock())) { //excede o no cumple con limite de unidades
+////            sumarSaldoCaja(unidadesProducto * producto.getPrecio());
+////        }else if(unidadesProducto > producto.getStock()){
+////            sumarSaldoCaja(producto.getStock() * producto.getPrecio());
+//////            this.listaProductosStock.get(i).setEstaDisponible(false);
+////            //eliminar producto de la venta
+////        }
+//
+//    }
 
+    public boolean venderProducto(String codigo, int unidades){
+
+        Producto producto = obtenerProductoDeListaPorCodigo(codigo);
+        boolean ventaRealizada = false;
+
+        if(producto != null && producto.getEstaDisponible()){
+
+            if(esUnidadValida(unidades)){
+
+                if(unidades < producto.getStock()) {
+                    sumarSaldoCaja(unidades * producto.getPrecio());
+                    //descontarUnidadesProducto()
+                    producto.setStock(producto.getStock() - unidades);
+
+                }else{
+                    sumarSaldoCaja(producto.getStock() * producto.getPrecio());
+
+                    producto.setStock(0);
+                    producto.setEstaDisponible(false);
+                }
+                ventaRealizada = true;
+            }
+
+           else{
+                System.out.println("Unidad ingresada no valida. Por favor ingrese un número de unidad del 1 al 12");
+
+            }
+
+        }else{
+            System.out.println("El producto " + producto.getCodigo() + " " +
+                    producto.getDescripcion() + "no se encuentra disponible para la venta");
+
+        }
+
+        actualizarListaProductosDisponibles();
+
+        return ventaRealizada;
+
+    }
+
+    public void actualizarListaProductosDisponibles(){ //recorre la lista y elimina los productos que no esten
+        //disponibles para la venta
+
+        for(Producto producto : this.listaProductosStock){
+            if(!producto.getEstaDisponible()){
+                listaProductosStock.remove(producto);
+            }
+        }
+
+    }
+    //endregion
+
+
+    //Listas de productos
+    public Producto obtenerProductoDeListaPorCodigo(String codigo){
+        Producto productoEncontrado = null;
+
+        for (Producto producto : listaProductosStock) {
+            if (codigo.equals(producto.getCodigo())) {
+                productoEncontrado = producto;
+                break;
+            }
+        }
+        return productoEncontrado;
+    }
+    public int obtenerSumaStockTotalListaProductos(ArrayList<Producto> listaProductosStock){
+
+        int totalStock = 0;
+
+        for (Producto producto : listaProductosStock) {
+            totalStock = totalStock + producto.getStock();
+        }
+
+        return totalStock;
+    }
+    public boolean excedeLimiteStockMaximo(int stockProducto){
+        //devuelve true si el stock del producto pasado por parametro, supera el stock maximo.
+        boolean resp = false;
+        int stockFinal = obtenerSumaStockTotalListaProductos(this.listaProductosStock) + stockProducto;
+
+        if(stockFinal > this.stockMax){
+            resp = true;
+        }
+
+        return resp;
+    }
+    public void mostrarListaProductos(){
+    }
+    //podriamos hacer metodos el cual sean obtenerProductoEnvasadoPorCodigo, etc. para no crear una variable Producto como null
+
+
+    //Saldo de Caja
+    public void sumarSaldoCaja(float importe){
+        this.saldoCaja = saldoCaja + importe;
+    }
+    public void descontarSaldoCaja(float importe){
+        this.saldoCaja = saldoCaja - importe;
+
+    }
+    public void mostrarSaldoCaja(){
+        System.out.println("Su saldo de caja es: " + saldoCaja);
+    }
+
+    //Venta
+    public void imprimirDetalleLineaProducto(Producto producto, int unidades){
+        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + " x " + producto.getPrecio());
+    }
+//    public void imprimirDetalleVenta(ArrayList<Venta> lis){
+//        for(Producto producto : productosVendidos){
+//            imprimirDetalleLineaProducto(producto, producto.unidades);
+//        }
+//    }
+
+
+    public boolean esUnidadValida(int unidadesProducto){
+        //verifica si las unidades que se ingresaron no exceden de las 12 unidades o son menores a 1 unidad, retorna true si cumple con los requisitos
+        return (unidadesProducto >= 1 && unidadesProducto <= 12);
+    }
 
 
     @Override
@@ -129,7 +274,7 @@ public class Tienda {
                 "nombre='" + nombre + '\'' +
                 ", stockMax=" + stockMax +
                 ", saldoCaja=" + saldoCaja +
-                ", productosStock=" + productosStock +
+                ", productosStock=" + listaProductosStock +
                 '}';
     }
 }

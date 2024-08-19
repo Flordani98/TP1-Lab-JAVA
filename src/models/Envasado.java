@@ -1,6 +1,6 @@
 package models;
 
-import models.Enums.TipoEnvase;
+import Enums.TipoEnvase;
 
 import java.time.LocalDate;
 

@@ -98,6 +98,10 @@ public abstract class Producto {
 //    public abstract boolean validarSiExisteCodigoProducto(String codigo);
 
     //TODO: implementar equals y hashcode
+    public float calcularImporteTotalProducto(){
+        return this.precio * this.stock;
+    }
+
 
 
 

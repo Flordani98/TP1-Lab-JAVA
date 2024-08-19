@@ -1,12 +1,11 @@
 import models.Bebida;
-import models.Enums.TipoAplicacion;
-import models.Enums.TipoEnvase;
+import Enums.TipoAplicacion;
+import Enums.TipoEnvase;
 import models.Envasado;
 import models.Limpieza;
 import models.Tienda;
 
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
