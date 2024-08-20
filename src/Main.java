@@ -9,14 +9,8 @@ import java.time.LocalDate;
 
 public class Main {
     public static void main(String[] args) {
-//        Bebida bebida = new Bebida();
-//        Limpieza producto = new Limpieza("producto de prueba", 3, 1239, 34, true, TipoAplicacion.MULTIUSO);
-//        Limpieza producto2 = new Limpieza("producto de prueba", 20, 1239, 34, true, TipoAplicacion.MULTIUSO);
-//        Limpieza producto3 = new Limpieza("producto de prueba", 34, 1239, 34, true, TipoAplicacion.MULTIUSO);
-//
-//        System.out.println(producto.getCodigo());
-//        System.out.println(producto2.getCodigo());
-//        System.out.println(producto3.getCodigo());
+
+        Tienda tienda = new Tienda("LOLO", 200, 500000);
 
         Limpieza producto1 = new Limpieza("Limpiador de cocina", 50, 100.0f, 30.0f, TipoAplicacion.COCINA);
         Limpieza producto2 = new Limpieza("Desinfectante de baño", 75, 120.0f, 35.0f, TipoAplicacion.BANIO);
@@ -31,9 +25,15 @@ public class Main {
         Bebida producto7 = new Bebida("Jugo de naranja", 400, 80.0f, 20.0f,  0.0f, false, LocalDate.of(2024, 9, 10), 123.3f);
 
 
-
-        Tienda tienda = new Tienda("LOLO", 200, 500000);
         tienda.agregarProducto(producto1);
+        tienda.agregarProducto(producto2);
+        tienda.agregarProducto(producto3);
+        tienda.agregarProducto(producto4);
+        tienda.agregarProducto(producto5);
+        tienda.agregarProducto(producto6);
+        tienda.agregarProducto(producto7);
+
+        tienda.mostrarListaProductosStock();
 
 //        System.out.println("Bienvenido a tienda LOLO");
 //        System.out.println("Ingrese una opcion:");

@@ -69,8 +69,9 @@ public class Limpieza extends Producto{
 
     @Override
     public String toString() {
-        return "Limpieza{" +
-                "tipoAplicacion=" + tipoAplicacion +
-                '}';
+        return super.toString() +
+                "\n" +
+                "\n Tipo de producto: Limpieza" +
+                "\n Tipo de Aplicacion: " + tipoAplicacion.getNombre();
     }
 }

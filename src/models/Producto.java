@@ -102,18 +102,20 @@ public abstract class Producto {
         return this.precio * this.stock;
     }
 
+    public String formatearUnidadStock(){
+        return (this.stock > 1) ? " unidades" : " unidad";
+    }
 
 
 
     @Override
     public String toString() {
-        return "Producto{" +
-                "codigo='" + codigo + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", stock=" + stock +
-                ", precio=" + precio +
-                ", porcentajeGanancia=" + porcentajeGanancia +
-                ", estaDisponible=" + estaDisponible +
-                '}';
+        return "\t\t\t Producto" +
+                "\n Codigo: " + codigo +
+                "\n Descripcion: " + descripcion +
+                "\n Stock: " + stock + formatearUnidadStock() +
+                "\n Precio: $" + precio +
+                "\n Porcentaje Ganancia: %" + porcentajeGanancia +
+                "\n Esta Disponible: " + (estaDisponible ? "SÍ" : "NO");
     }
 }
