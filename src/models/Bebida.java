@@ -2,7 +2,7 @@ package models;
 
 import java.time.LocalDate;
 
-public class Bebida extends Producto{
+public class Bebida extends Comestible{
 
     private static int contador = 1;
 
@@ -10,8 +10,6 @@ public class Bebida extends Producto{
     private float graduacionAlcohol;
     private Boolean esImportado;
 
-    private LocalDate fechaVencimiento;
-    private float calorias;
 
     //endregion
 
@@ -19,11 +17,9 @@ public class Bebida extends Producto{
 
     public Bebida(String descripcion, int stock, float precio, float porcentajeGanancia, float graduacionAlcohol,
                   Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia);
+        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias);
         this.graduacionAlcohol = graduacionAlcohol;
         this.esImportado = esImportado;
-        this.fechaVencimiento = fechaVencimiento;
-        this.calorias = calorias;
 
         super.setCodigo(generarCodigoProducto());
 

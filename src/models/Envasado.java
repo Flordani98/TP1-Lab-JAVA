@@ -4,15 +4,13 @@ import Enums.TipoEnvase;
 
 import java.time.LocalDate;
 
-public class Envasado extends Producto{
+public class Envasado extends Comestible{
 
     private static int contador = 1;
     //region atributos
     private TipoEnvase tipoEnvase;
     private Boolean esImportado;
 
-    private LocalDate fechaVencimiento;
-    private float calorias;
 
     //endregion
 
@@ -20,11 +18,9 @@ public class Envasado extends Producto{
 
     public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, TipoEnvase tipoEnvase,
                     Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia);
+        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias);
         this.tipoEnvase = tipoEnvase;
         this.esImportado = esImportado;
-        this.fechaVencimiento = fechaVencimiento;
-        this.calorias = calorias;
 
         super.setCodigo(generarCodigoProducto());
 
