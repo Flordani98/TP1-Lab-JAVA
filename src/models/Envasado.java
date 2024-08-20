@@ -61,9 +61,10 @@ public class Envasado extends Producto{
 
     @Override
     public String toString() {
-        return "Envasado{" +
-                "tipoEnvase=" + tipoEnvase +
-                ", esImportado=" + esImportado +
-                '}';
+        return super.toString() +
+                "\n" +
+                "\n Tipo de producto: Envasado" +
+                "\n Tipo de envase: " + tipoEnvase +
+                "\n Es Importado: " + (esImportado ? "SÍ" : "NO");
     }
 }

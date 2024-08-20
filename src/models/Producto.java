@@ -110,7 +110,7 @@ public abstract class Producto {
 
     @Override
     public String toString() {
-        return "\t\t\t Producto" +
+        return "\n\t\t\t Producto" +
                 "\n Codigo: " + codigo +
                 "\n Descripcion: " + descripcion +
                 "\n Stock: " + stock + formatearUnidadStock() +

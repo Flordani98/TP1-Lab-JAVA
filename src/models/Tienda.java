@@ -1,6 +1,6 @@
 package models;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Tienda {
 
@@ -113,43 +113,58 @@ public class Tienda {
 
     public void venderProductos(ArrayList<Producto> productos){
 
+        boolean ventaRealizada = false;
+        int unidadesSolicitadas = 0;
+        int unidadesVendidas = 0;
         float totalVenta = 0;
 
-        if(productos.size() < 1 || productos.size() >3){ //no cumple con cantidad requerida o excede cantidad de productos para vender
-            System.out.println("Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos");
-            //TODO: se podria agregar un excepcion aca, para que salga de ese metodo y no continue el codigo de abajo
-        }
+        Scanner scan = new Scanner(System.in);
+        Map<Producto, Integer> productosVendidos = new HashMap<>();
+        ArrayList<String> mensajesVenta = new ArrayList<>();
 
-        for (Producto producto : productos) {
-            System.out.println(producto.getDescripcion());
-            System.out.println("Ingrese las unidades deseadas:");
-            int unidades = 0; //hardcodeado
+        System.out.println("-------------------------------");
+        System.out.println("\t\tVENTA DE PRODUCTOS");
 
-            //region opcion anterior:
-            //continua vendiendo el resto de productos por mas que un producto no este disponible o las unidades no sean correctas:
-//            if(venderProducto(producto.getCodigo(), producto.getDescripcion(), unidades)){
-//                imprimirDetalleLineaProducto(producto, unidades);
-//                totalVenta = totalVenta + (producto.getPrecio() * unidades);
-//            }
-            //endregion
+        if(productos != null && validarCantidadProductosVenta(productos.size())){
 
-            //otra manera de realizar lo de arriba solo que si la venta de algun producto pasado no se puede realizar se sale del bucle:
-            if(!venderProducto(producto.getCodigo(), producto.getDescripcion(), unidades)){
-                break;
+            for (Producto producto : productos) {
+
+                System.out.println("-------------------------------");
+                System.out.println("Producto: " + producto.getCodigo() + " " +producto.getDescripcion());
+                System.out.println("Ingrese las unidades deseadas:");
+                unidadesSolicitadas = scan.nextInt();
+
+                unidadesVendidas = venderProducto(producto.getCodigo(), producto.getDescripcion(), unidadesSolicitadas, mensajesVenta);
+
+                if(unidadesVendidas == 0){
+                    break;
+                }
+
+                productosVendidos.put(producto, unidadesVendidas);
+                totalVenta += (producto.getPrecio() * unidadesVendidas);
+                ventaRealizada = true;
+
             }
-            imprimirDetalleLineaProducto(producto, unidades);
-            totalVenta = totalVenta + (producto.getPrecio() * unidades);
+            if(ventaRealizada){
+                imprimirDetalleVenta(productosVendidos, totalVenta, mensajesVenta);
+            }
 
+        }else{
+            System.out.println("Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos");
         }
 
-        System.out.println("TOTAL VENTA: " + totalVenta);
+        scan.close();
 
     }
 
-    public boolean venderProducto(String codigo, String descripcion, int unidades){
+    public boolean validarCantidadProductosVenta(int cantidadProductos){
+        return (cantidadProductos >=1 && cantidadProductos <=3);
+    }
+
+    public int venderProducto(String codigo, String descripcion, int unidades, ArrayList<String> mensajesVenta){
 
         Producto producto = obtenerProductoDeListaSegunCodigo(codigo);
-        boolean ventaRealizada = false;
+        int unidadesVendidas = 0;
 
         if(producto != null && producto.getEstaDisponible()){
 
@@ -157,31 +172,32 @@ public class Tienda {
 
                 if(unidades < producto.getStock()) {
                     sumarSaldoCaja(unidades * producto.getPrecio());
-                    //descontarUnidadesProducto()
                     producto.setStock(producto.getStock() - unidades);
 
-                }else{
-                    sumarSaldoCaja(producto.getStock() * producto.getPrecio());
+                    unidadesVendidas = unidades;
 
+                }else{
+                    unidadesVendidas = producto.getStock();
+                    sumarSaldoCaja(unidadesVendidas * producto.getPrecio());
                     producto.setStock(0);
                     producto.setEstaDisponible(false);
+
+                    mensajesVenta.add("Hay productos con stock disponible menor al solicitado");
                 }
-                ventaRealizada = true;
             }
 
            else{
-                System.out.println("Unidad ingresada no valida. Por favor ingrese un número de unidad del 1 al 12");
+                mensajesVenta.add("Unidad ingresada no valida. Por favor ingrese un número de unidad del 1 al 12");
 
             }
 
         }else{
-            System.out.println("El producto " + codigo + " " + descripcion + "no se encuentra disponible para la venta");
-
+            mensajesVenta.add("El producto " + codigo + " " + descripcion + "no se encuentra disponible para la venta");
         }
 
         actualizarListaProductosDisponibles();
 
-        return ventaRealizada;
+        return unidadesVendidas;
 
     }
 
@@ -189,6 +205,7 @@ public class Tienda {
         for(Producto producto : this.listaProductosStock){
             System.out.println("-----------------------------------");
             System.out.println(producto);
+            System.out.println("-----------------------------------");
         }
     }
 
@@ -206,8 +223,9 @@ public class Tienda {
         boolean resp = false;
 
         for(Producto producto : listaProductosStock){
-            if(codigo.equals(producto.getCodigo())){
+            if (codigo.equals(producto.getCodigo())) {
                 resp = true;
+                break;
             }
         }
         return resp;
@@ -263,7 +281,22 @@ public class Tienda {
 
     //Venta
     public void imprimirDetalleLineaProducto(Producto producto, int unidades){
-        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + " x " + producto.getPrecio());
+        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + "u. x $" + producto.getPrecio());
+    }
+
+    public void imprimirDetalleVenta(Map<Producto, Integer> productosVendidos, float totalVenta, ArrayList<String> mensajesVenta){
+        System.out.println("----------------------------------");
+        System.out.println("\t\t DETALLE DE VENTA");
+        System.out.println("----------------------------------");
+        productosVendidos.forEach(this::imprimirDetalleLineaProducto);
+
+        System.out.println("----------------------------------");
+        mensajesVenta.forEach(System.out::println);
+        System.out.println("----------------------------------");
+
+        System.out.println("TOTAL VENTA: $" + totalVenta);
+        System.out.println("----------------------------------\n");
+
     }
 
     public boolean esUnidadValida(int unidadesProducto){
@@ -274,11 +307,9 @@ public class Tienda {
 
     @Override
     public String toString() {
-        return "Tienda{" +
-                "nombre='" + nombre + '\'' +
-                ", stockMax=" + stockMax +
-                ", saldoCaja=" + saldoCaja +
-                ", productosStock=" + listaProductosStock +
-                '}';
+        return "\t\t\t Tienda" +
+                "\n Nombre: " + nombre +
+                "\n Stock Máximo: " + stockMax +
+                "\n Saldo de Caja: " + saldoCaja;
     }
 }

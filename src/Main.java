@@ -1,18 +1,17 @@
-import models.Bebida;
+import models.*;
 import Enums.TipoAplicacion;
 import Enums.TipoEnvase;
-import models.Envasado;
-import models.Limpieza;
-import models.Tienda;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
 
-        Tienda tienda = new Tienda("LOLO", 200, 500000);
+        Tienda tienda = new Tienda("LOLO", 200000, 100000);
 
-        Limpieza producto1 = new Limpieza("Limpiador de cocina", 50, 100.0f, 30.0f, TipoAplicacion.COCINA);
+        Limpieza producto1 = new Limpieza("Limpiador de cocina", 11, 100.0f, 30.0f, TipoAplicacion.COCINA);
         Limpieza producto2 = new Limpieza("Desinfectante de baño", 75, 120.0f, 35.0f, TipoAplicacion.BANIO);
         Limpieza producto3 = new Limpieza("producto de prueba", 34, 1239f, 34f,  TipoAplicacion.MULTIUSO);
 
@@ -34,6 +33,11 @@ public class Main {
         tienda.agregarProducto(producto7);
 
         tienda.mostrarListaProductosStock();
+
+        System.out.println(tienda);
+
+        tienda.venderProductos(new ArrayList<>(Arrays.asList(producto1, producto2, producto4)));
+        System.out.println(tienda);
 
 //        System.out.println("Bienvenido a tienda LOLO");
 //        System.out.println("Ingrese una opcion:");

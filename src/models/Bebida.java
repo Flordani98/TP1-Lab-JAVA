@@ -62,9 +62,10 @@ public class Bebida extends Producto{
 
     @Override
     public String toString() {
-        return "Bebida{" +
-                "graduacionAlcohol=" + graduacionAlcohol +
-                ", esImportado=" + esImportado +
-                '}';
+        return super.toString() +
+                "\n" +
+                "\n Tipo de producto: Bebida" +
+                "\n Graduación de Alcohol: %" + graduacionAlcohol +
+                "\n Es Importado: " + (esImportado ? "SÍ" : "NO");
     }
 }
