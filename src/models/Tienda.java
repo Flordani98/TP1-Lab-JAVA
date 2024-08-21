@@ -192,10 +192,10 @@ public class Tienda {
             }
 
         }else{
-            mensajesVenta.add("El producto " + codigo + " " + descripcion + "no se encuentra disponible para la venta");
+            mensajesVenta.add("El producto " + codigo + " " + descripcion.toUpperCase() + " no se encuentra disponible para la venta");
         }
 
-        actualizarListaProductosDisponibles();
+//        actualizarListaProductosDisponibles();
 
         return unidadesVendidas;
 
@@ -215,6 +215,9 @@ public class Tienda {
     //Listas de productos
     public void actualizarListaProductosDisponibles(){
         //recorre la lista y elimina los productos que no esten disponibles para la venta
+
+        //NO la utilizare ya que releyendo los items del TP, no dice en ningun momento que debera ser
+        //eliminado el producto de la lista, sino que solo debera ser eliminado el producto DE LA VENTA.
         this.listaProductosStock.removeIf(producto -> !producto.getEstaDisponible());
 
     }
@@ -262,8 +265,6 @@ public class Tienda {
 
         return resp;
     }
-    public void mostrarListaProductos(){
-    }
     //podriamos hacer metodos el cual sean obtenerProductoEnvasadoPorCodigo, etc. para no crear una variable Producto como null
 
 
@@ -302,6 +303,26 @@ public class Tienda {
     public boolean esUnidadValida(int unidadesProducto){
         //verifica si las unidades que se ingresaron no exceden de las 12 unidades o son menores a 1 unidad, retorna true si cumple con los requisitos
         return (unidadesProducto >= 1 && unidadesProducto <= 12);
+    }
+
+    //Descuentos
+    public void aplicarDescuentoProducto(String codigo, float porcentajeDescuento){
+        float descuentoAplicado = 0.0f;
+        Producto producto = obtenerProductoDeListaSegunCodigo(codigo);
+
+        if( producto != null){
+            if(porcentajeDescuento > 0){
+                descuentoAplicado = producto.aplicarDescuento(porcentajeDescuento);
+                if(descuentoAplicado > 0){
+                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() + " un descuento del" +
+                            " %" + descuentoAplicado);
+                }
+            }else{
+                System.out.println("El porcentaje de descuento debe ser mayor a 0");
+            }
+        }else{
+            System.out.println("Producto no encontrado, por favor verifique el código ingresado");
+        }
     }
 
 

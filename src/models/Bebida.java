@@ -3,6 +3,7 @@ package models;
 import java.time.LocalDate;
 
 public class Bebida extends Comestible{
+    private static final float MAX_PORCENTAJE_DESC = 10.0f;
 
     private static int contador = 1;
 
@@ -26,6 +27,11 @@ public class Bebida extends Comestible{
         Bebida.contador++;
     }
 
+    public Bebida(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible, LocalDate fechaVencimiento, float calorias, float graduacionAlcohol, Boolean esImportado) {
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias);
+        this.graduacionAlcohol = graduacionAlcohol;
+        this.esImportado = esImportado;
+    }
 
     //endregion
 
@@ -53,6 +59,13 @@ public class Bebida extends Comestible{
     @Override
     public String generarCodigoProducto() {
         return "AC" + String.format("%03d", contador);
+    }
+
+
+
+    @Override
+    public float aplicarDescuento(float porcentajeDescuento) {
+        return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
     }
 
 

@@ -1,6 +1,7 @@
 package models;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public abstract class Comestible extends Producto{
     private LocalDate fechaVencimiento;
@@ -8,8 +9,18 @@ public abstract class Comestible extends Producto{
 
     public Comestible(){}
 
-    public Comestible(String descripcion, int stock, float precio, float porcentajeGanancia, LocalDate fechaVencimiento, float calorias) {
+    public Comestible(String descripcion, int stock, float precio, float porcentajeGanancia, LocalDate fechaVencimiento,
+                      float calorias) {
+
         super(descripcion, stock, precio, porcentajeGanancia);
+        this.fechaVencimiento = fechaVencimiento;
+        this.calorias = calorias;
+    }
+
+    public Comestible(String descripcion, int stock, float precio, float porcentajeGanancia,
+                      float porcentajeDescuento, Boolean estaDisponible, LocalDate fechaVencimiento, float calorias) {
+
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible);
         this.fechaVencimiento = fechaVencimiento;
         this.calorias = calorias;
     }
@@ -30,9 +41,16 @@ public abstract class Comestible extends Producto{
         this.calorias = calorias;
     }
 
+    public String formatearFechaLocalDate(LocalDate fecha){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return fecha.format(formato);
+
+    }
+
     @Override
     public String toString() {
-        return "\n Fecha de vencimiento: " + fechaVencimiento +
+        return super.toString() +
+                "\n Fecha de vencimiento: " + formatearFechaLocalDate(fechaVencimiento) +
                 "\n Calorias: " + calorias;
     }
 }

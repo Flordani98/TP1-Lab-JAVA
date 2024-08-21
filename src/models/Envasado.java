@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 public class Envasado extends Comestible{
 
+    private static final float MAX_PORCENTAJE_DESC = 15.0f;
+
     private static int contador = 1;
     //region atributos
     private TipoEnvase tipoEnvase;
@@ -27,6 +29,11 @@ public class Envasado extends Comestible{
         Envasado.contador++;
     }
 
+    public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible, LocalDate fechaVencimiento, float calorias, TipoEnvase tipoEnvase, Boolean esImportado) {
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias);
+        this.tipoEnvase = tipoEnvase;
+        this.esImportado = esImportado;
+    }
 
     //endregion
 
@@ -56,11 +63,17 @@ public class Envasado extends Comestible{
 
 
     @Override
+    public float aplicarDescuento(float porcentajeDescuento) {
+        return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
+    }
+
+
+    @Override
     public String toString() {
         return super.toString() +
                 "\n" +
                 "\n Tipo de producto: Envasado" +
-                "\n Tipo de envase: " + tipoEnvase +
+                "\n Tipo de envase: " + tipoEnvase.getNombre() +
                 "\n Es Importado: " + (esImportado ? "SÍ" : "NO");
     }
 }

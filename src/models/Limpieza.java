@@ -4,6 +4,8 @@ import Enums.TipoAplicacion;
 
 public class Limpieza extends Producto{
 
+    private static final float MAX_PORCENTAJE_DESC = 20.0f;
+
     //utilizo un contador estatico es decir perteneciente a la clase y cada vez q se cree un producto limpieza
     //el contador sumara 1, y se concatenara ese numero al codigo del producto.
     //Tambien se podria crear un codigo de manera aleatoria, pero para este ejercicio me resulta mas práctico utilizar
@@ -24,7 +26,10 @@ public class Limpieza extends Producto{
         Limpieza.contador++;
     }
 
-
+    public Limpieza(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible, TipoAplicacion tipoAplicacion) {
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible);
+        this.tipoAplicacion = tipoAplicacion;
+    }
 
     //endregion
 
@@ -44,6 +49,11 @@ public class Limpieza extends Producto{
         //se pasara de la longitud 5 por primera vez, se puede lanzar un msj de aviso (o excepción?)
         return "AZ" + String.format("%03d", contador);
 
+    }
+
+    @Override
+    public float aplicarDescuento(float porcentajeDescuento) {
+        return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
     }
 
 //    @Override

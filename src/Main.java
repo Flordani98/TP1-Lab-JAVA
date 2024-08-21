@@ -36,8 +36,14 @@ public class Main {
 
         System.out.println(tienda);
 
-        tienda.venderProductos(new ArrayList<>(Arrays.asList(producto1, producto2, producto4)));
+        tienda.venderProductos(new ArrayList<>(Arrays.asList(producto1, producto2, producto1)));
         System.out.println(tienda);
+
+        tienda.mostrarListaProductosStock();
+
+//        System.out.println(tienda.getListaProductosStock());
+
+
 
 //        System.out.println("Bienvenido a tienda LOLO");
 //        System.out.println("Ingrese una opcion:");

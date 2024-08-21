@@ -8,6 +8,7 @@ public abstract class Producto {
     private int stock;
     private float precio;
     private float porcentajeGanancia;
+    private float porcentajeDescuento;
     private Boolean estaDisponible;
 
     //endregion
@@ -18,7 +19,6 @@ public abstract class Producto {
 
     public Producto(String descripcion, int stock, float precio,
                     float porcentajeGanancia){
-//        this.codigo = codigo;
         this.descripcion = descripcion;
         this.stock = stock;
         this.precio = precio;
@@ -26,15 +26,14 @@ public abstract class Producto {
         this.estaDisponible = true;
 
     }
-    public Producto(String codigo, String descripcion, int stock, float precio,
-                    float porcentajeGanancia){
-        this.codigo = codigo;
+
+    public Producto(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible) {
         this.descripcion = descripcion;
         this.stock = stock;
         this.precio = precio;
         this.porcentajeGanancia = porcentajeGanancia;
-        this.estaDisponible = true;
-
+        this.porcentajeDescuento = porcentajeDescuento;
+        this.estaDisponible = estaDisponible;
     }
 
     //endregion
@@ -89,13 +88,37 @@ public abstract class Producto {
         this.estaDisponible = estaDisponible;
     }
 
+    public float getPorcentajeDescuento() {
+        return porcentajeDescuento;
+    }
+
+    public void setPorcentajeDescuento(float porcentajeDescuento) {
+        this.porcentajeDescuento = porcentajeDescuento;
+    }
+
     //endregion
+
+    protected float aplicarDescuentoBase(float porcentajeDescuento, float maxDescuento, String tipoProducto){
+        float descuentoAplicado = 0.0f;
+        if(porcentajeDescuento > 0 && porcentajeDescuento <= maxDescuento){
+           this.setPorcentajeDescuento(porcentajeDescuento);
+            descuentoAplicado = porcentajeDescuento;
+        }else{
+            System.out.println("El porcentaje de descuento para el tipo de producto " + tipoProducto +
+                    "no tiene que ser mayor a %" + maxDescuento);
+        }
+
+        return descuentoAplicado;
+    }
 
     public abstract String generarCodigoProducto();
 
 //    public abstract String validarYFormatearCodigoProducto(String codigo);
 
 //    public abstract boolean validarSiExisteCodigoProducto(String codigo);
+
+    public abstract float aplicarDescuento(float porcentajeDescuento);
+
 
     //TODO: implementar equals y hashcode
     public float calcularImporteTotalProducto(){
@@ -105,6 +128,7 @@ public abstract class Producto {
     public String formatearUnidadStock(){
         return (this.stock > 1) ? " unidades" : " unidad";
     }
+
 
 
 
