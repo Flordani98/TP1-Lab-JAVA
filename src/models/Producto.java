@@ -65,13 +65,8 @@ public abstract class Producto {
     }
 
     public float getPrecio() {
-        float precioFinal = this.precio;
-
-        if(this.porcentajeDescuento > 0){
-            precioFinal = this.precio - (this.precio * this.porcentajeDescuento / 100);
-        }
-
-        return precioFinal;
+        calcularPrecioFinal();
+        return this.precio;
     }
 
     public void setPrecio(float precio) {
@@ -145,7 +140,18 @@ public abstract class Producto {
         return (this.stock > 1) ? " unidades" : " unidad";
     }
 
+    protected void calcularPrecioFinalBase(){
+        float precioFinal = this.precio;
 
+        if(this.porcentajeGanancia > 0){
+            precioFinal = this.precio + (this.precio * this.porcentajeGanancia / 100);
+        }
+        if(this.porcentajeDescuento > 0){
+            precioFinal = this.precio - (this.precio * this.porcentajeDescuento / 100);
+        }
+
+        setPrecio(precioFinal);
+    }
     public abstract void calcularPrecioFinal();
 
     //TODO: implementar equals y hashcode

@@ -11,7 +11,7 @@ public class Envasado extends Comestible{
     private static int contador = 1;
     //region atributos
     private TipoEnvase tipoEnvase;
-    private Boolean esImportado;
+
 
 
     //endregion
@@ -20,9 +20,8 @@ public class Envasado extends Comestible{
 
     public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, TipoEnvase tipoEnvase,
                     Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias);
+        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias, esImportado);
         this.tipoEnvase = tipoEnvase;
-        this.esImportado = esImportado;
 
         super.setCodigo(generarCodigoProducto());
 
@@ -30,9 +29,8 @@ public class Envasado extends Comestible{
     }
 
     public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible, LocalDate fechaVencimiento, float calorias, TipoEnvase tipoEnvase, Boolean esImportado) {
-        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias);
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias, esImportado);
         this.tipoEnvase = tipoEnvase;
-        this.esImportado = esImportado;
     }
 
     //endregion
@@ -46,13 +44,7 @@ public class Envasado extends Comestible{
         this.tipoEnvase = tipoEnvase;
     }
 
-    public Boolean getEsImportado() {
-        return esImportado;
-    }
 
-    public void setEsImportado(Boolean esImportado) {
-        this.esImportado = esImportado;
-    }
     //endregion
 
 
@@ -68,17 +60,10 @@ public class Envasado extends Comestible{
     }
 
     @Override
-    public void calcularPrecioFinal() {
-
-    }
-
-
-    @Override
     public String toString() {
         return super.toString() +
                 "\n" +
                 "\n Tipo de producto: Envasado" +
-                "\n Tipo de envase: " + tipoEnvase.getNombre() +
-                "\n Es Importado: " + (esImportado ? "SÍ" : "NO");
+                "\n Tipo de envase: " + tipoEnvase.getNombre();
     }
 }

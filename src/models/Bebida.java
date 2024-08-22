@@ -9,7 +9,6 @@ public class Bebida extends Comestible{
 
     //region atributos
     private float graduacionAlcohol;
-    private Boolean esImportado;
 
 
     //endregion
@@ -18,9 +17,8 @@ public class Bebida extends Comestible{
 
     public Bebida(String descripcion, int stock, float precio, float porcentajeGanancia, float graduacionAlcohol,
                   Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias);
+        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias, esImportado);
         this.graduacionAlcohol = graduacionAlcohol;
-        this.esImportado = esImportado;
 
         super.setCodigo(generarCodigoProducto());
 
@@ -28,9 +26,8 @@ public class Bebida extends Comestible{
     }
 
     public Bebida(String descripcion, int stock, float precio, float porcentajeGanancia, float porcentajeDescuento, Boolean estaDisponible, LocalDate fechaVencimiento, float calorias, float graduacionAlcohol, Boolean esImportado) {
-        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias);
+        super(descripcion, stock, precio, porcentajeGanancia, porcentajeDescuento, estaDisponible, fechaVencimiento, calorias, esImportado);
         this.graduacionAlcohol = graduacionAlcohol;
-        this.esImportado = esImportado;
     }
 
     //endregion
@@ -45,16 +42,22 @@ public class Bebida extends Comestible{
         this.graduacionAlcohol = graduacionAlcohol;
     }
 
-    public Boolean getEsImportado() {
-        return esImportado;
-    }
 
-    public void setEsImportado(Boolean esImportado) {
-        this.esImportado = esImportado;
-    }
 
     //endregion
 
+    public void calcularCalorias(){
+
+        float totalCalorias = super.getCalorias();
+
+        if(graduacionAlcohol > 4.5){
+            totalCalorias *= 1.5f;
+        }else if(graduacionAlcohol >= 2.1){
+            totalCalorias *= 1.25f;
+        }
+
+        setCalorias(totalCalorias);
+    }
 
     @Override
     public String generarCodigoProducto() {
@@ -62,16 +65,11 @@ public class Bebida extends Comestible{
     }
 
 
-
     @Override
     public float aplicarDescuento(float porcentajeDescuento) {
         return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
     }
 
-    @Override
-    public void calcularPrecioFinal() {
-
-    }
 
 
     @Override
@@ -79,7 +77,6 @@ public class Bebida extends Comestible{
         return super.toString() +
                 "\n" +
                 "\n Tipo de producto: Bebida" +
-                "\n Graduación de Alcohol: %" + graduacionAlcohol +
-                "\n Es Importado: " + (esImportado ? "SÍ" : "NO");
+                "\n Graduación de Alcohol: %" + graduacionAlcohol;
     }
 }

@@ -98,7 +98,7 @@ public class Limpieza extends Producto{
 
     @Override
     public void calcularPrecioFinal() {
-
+        calcularPrecioFinalBase();
     }
 
     @Override
