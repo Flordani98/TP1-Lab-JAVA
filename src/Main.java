@@ -24,6 +24,7 @@ public class Main {
         Bebida producto7 = new Bebida("Jugo de naranja", 400, 80.0f, 20.0f,  0.0f, false, LocalDate.of(2024, 9, 10), 123.3f);
 
 
+
         tienda.agregarProducto(producto1);
         tienda.agregarProducto(producto2);
         tienda.agregarProducto(producto3);

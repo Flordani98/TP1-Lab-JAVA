@@ -67,6 +67,11 @@ public class Envasado extends Comestible{
         return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
     }
 
+    @Override
+    public void calcularPrecioFinal() {
+
+    }
+
 
     @Override
     public String toString() {

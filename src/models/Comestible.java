@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public abstract class Comestible extends Producto{
+
+    private static final float MAX_PORCENTAJE_GANANCIA = 20.0f;
+
     private LocalDate fechaVencimiento;
     private float calorias;
 
@@ -45,6 +48,22 @@ public abstract class Comestible extends Producto{
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return fecha.format(formato);
 
+    }
+
+    @Override
+    public float aplicarPorcentajeGanancia(float porcentajeGanancia) {
+        float porcentajeGananciaAplicado = 0.0f;
+        if(porcentajeGanancia > 0){
+            if(porcentajeGanancia <= MAX_PORCENTAJE_GANANCIA ){
+               super.setPorcentajeGanancia(porcentajeGanancia);
+               porcentajeGananciaAplicado = porcentajeGanancia;
+            }else{
+                System.out.println("El porcentaje de ganancia no debe superar el %" + MAX_PORCENTAJE_GANANCIA);
+            }
+        }else{
+            System.out.println("El porcentaje de ganancia debe ser mayor a 0");
+        }
+        return porcentajeGananciaAplicado;
     }
 
     @Override

@@ -5,6 +5,8 @@ import Enums.TipoAplicacion;
 public class Limpieza extends Producto{
 
     private static final float MAX_PORCENTAJE_DESC = 20.0f;
+    private static final float MAX_PORCENTAJE_GANANCIA = 25.0f;
+
 
     //utilizo un contador estatico es decir perteneciente a la clase y cada vez q se cree un producto limpieza
     //el contador sumara 1, y se concatenara ese numero al codigo del producto.
@@ -43,6 +45,22 @@ public class Limpieza extends Producto{
     }
     //endregion
 
+    public boolean esTipoCocinaOMulituso(){
+        return (this.tipoAplicacion.equals(TipoAplicacion.COCINA)  || this.tipoAplicacion.equals(TipoAplicacion.MULTIUSO));
+    }
+
+    public boolean esValidoPorcentGanancia(float porcentajeGanancia){
+        boolean esValido = false;
+
+        if(esTipoCocinaOMulituso() ) {
+            esValido = porcentajeGanancia <= MAX_PORCENTAJE_GANANCIA;
+        }else{
+            esValido = porcentajeGanancia >= 10 && porcentajeGanancia <= MAX_PORCENTAJE_GANANCIA;
+        }
+
+        return esValido;
+    }
+
     @Override
     public String generarCodigoProducto() {
         //si el contador es = a 1000 es decir que el codigo alfanumerico
@@ -56,26 +74,32 @@ public class Limpieza extends Producto{
         return aplicarDescuentoBase(porcentajeDescuento, MAX_PORCENTAJE_DESC, this.getClass().getSimpleName());
     }
 
-//    @Override
-//    public String validarYFormatearCodigoProducto(String codigo) {
-//    //verifica si el codigo pasado por parametro cumple con la regla impuesta para los codigos de limpieza:
-//    // que sus primeros dos caracteres sean "AZ" y luego el resto de caracteres sean numeros enteros ya
-//    //que tienen que indicar el numero de producto del articulo
-//
-////        boolean result = codigo.startsWith("AZ");
-////        String digitos = codigo.substring(2);
-//
-//        //si el codigo no es valido:
-////        String codigoValido = generarCodigoProducto(codigo);
-//
-//        return "codigoValido";
-//    }
+    @Override
+    public float aplicarPorcentajeGanancia(float porcentajeGanancia) {
+        float porcentajeGananciaAplicado = 0.0f;
+        String mensaje = esTipoCocinaOMulituso() ? "El porcentaje de ganancia debe tener un minimo del %10 y no debe superar el %" + MAX_PORCENTAJE_GANANCIA
+                : "El porcentaje de ganancia no debe superar el %" + MAX_PORCENTAJE_GANANCIA;
 
-//    @Override
-//    public boolean validarSiExisteCodigoProducto(String codigo) {
-//        //debe verificar sino existe ya un producto con este mismo codigo pasado por parametro
-//        return false;
-//    }
+        if(porcentajeGanancia > 0){
+            if(esValidoPorcentGanancia(porcentajeGanancia)){
+                super.setPorcentajeGanancia(porcentajeGanancia);
+                porcentajeGananciaAplicado = porcentajeGanancia;
+            }else{
+                System.out.println(mensaje);
+            }
+
+        }else{
+            System.out.println("El porcentaje de ganancia debe ser mayor a 0");
+        }
+
+        return porcentajeGananciaAplicado;
+    }
+
+
+    @Override
+    public void calcularPrecioFinal() {
+
+    }
 
     @Override
     public String toString() {

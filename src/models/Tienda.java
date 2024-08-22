@@ -314,11 +314,33 @@ public class Tienda {
             if(porcentajeDescuento > 0){
                 descuentoAplicado = producto.aplicarDescuento(porcentajeDescuento);
                 if(descuentoAplicado > 0){
-                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() + " un descuento del" +
-                            " %" + descuentoAplicado);
+                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() +
+                            " un descuento del %" + descuentoAplicado);
                 }
             }else{
                 System.out.println("El porcentaje de descuento debe ser mayor a 0");
+            }
+        }else{
+            System.out.println("Producto no encontrado, por favor verifique el código ingresado");
+        }
+    }
+
+    //TODO: agregar metodo de eliminar descuentoProducto
+    //cuando el usuario elimine el descuento del producto el precio final debe ser 0
+
+    public void aplicarPorcentajeGanancia(String codigo, float porcentajeGanancia){
+        float porcGananciaAplicado = 0.0f;
+        Producto producto = obtenerProductoDeListaSegunCodigo(codigo);
+
+        if(producto != null){
+            if(porcentajeGanancia > 0){
+                porcGananciaAplicado = producto.aplicarPorcentajeGanancia(porcentajeGanancia);
+                if(porcGananciaAplicado > 0){
+                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() +
+                            " un porcentaje de ganancia del %" + porcGananciaAplicado);
+                }
+            }else{
+                System.out.println("El porcentaje de ganancia debe ser mayor a 0");
             }
         }else{
             System.out.println("Producto no encontrado, por favor verifique el código ingresado");

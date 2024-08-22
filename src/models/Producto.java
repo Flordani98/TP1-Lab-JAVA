@@ -65,7 +65,13 @@ public abstract class Producto {
     }
 
     public float getPrecio() {
-        return precio;
+        float precioFinal = this.precio;
+
+        if(this.porcentajeDescuento > 0){
+            precioFinal = this.precio - (this.precio * this.porcentajeDescuento / 100);
+        }
+
+        return precioFinal;
     }
 
     public void setPrecio(float precio) {
@@ -98,18 +104,6 @@ public abstract class Producto {
 
     //endregion
 
-    protected float aplicarDescuentoBase(float porcentajeDescuento, float maxDescuento, String tipoProducto){
-        float descuentoAplicado = 0.0f;
-        if(porcentajeDescuento > 0 && porcentajeDescuento <= maxDescuento){
-           this.setPorcentajeDescuento(porcentajeDescuento);
-            descuentoAplicado = porcentajeDescuento;
-        }else{
-            System.out.println("El porcentaje de descuento para el tipo de producto " + tipoProducto +
-                    "no tiene que ser mayor a %" + maxDescuento);
-        }
-
-        return descuentoAplicado;
-    }
 
     public abstract String generarCodigoProducto();
 
@@ -118,9 +112,31 @@ public abstract class Producto {
 //    public abstract boolean validarSiExisteCodigoProducto(String codigo);
 
     public abstract float aplicarDescuento(float porcentajeDescuento);
+    protected float aplicarDescuentoBase(float porcentajeDescuento, float maxDescuento, String tipoProducto){
+        float descuentoAplicado = 0.0f;
+        //cuando aplico el descuento lo unico que cambia es el porcentajeDescuento
+        //y en el precio final se va a mostrar el precio final del producto con el descuento aplicado
+
+        if(porcentajeDescuento > 0){
+            if(porcentajeDescuento <= maxDescuento){
+                this.setPorcentajeDescuento(porcentajeDescuento);
+                descuentoAplicado = porcentajeDescuento;
+            }else{
+                System.out.println("El porcentaje de descuento para el tipo de producto " + tipoProducto +
+                        "no tiene que ser mayor a %" + maxDescuento);
+            }
+        }else{
+            //realizo la validación de si porcentajeDescuento es mayor a 0 ACÁ y en TIENDA, ya que no sé si en algun
+            // momento utilizaré este método por si solo, es decir, sin utilizar el metodo de Tienda aplicarDescuentoProducto()
+            System.out.println("El porcentaje de descuento debe ser mayor a 0");
+        }
 
 
-    //TODO: implementar equals y hashcode
+        return descuentoAplicado;
+    }
+
+    public abstract float aplicarPorcentajeGanancia(float porcentajeGanancia);
+
     public float calcularImporteTotalProducto(){
         return this.precio * this.stock;
     }
@@ -130,8 +146,9 @@ public abstract class Producto {
     }
 
 
+    public abstract void calcularPrecioFinal();
 
-
+    //TODO: implementar equals y hashcode
     @Override
     public String toString() {
         return "\n\t\t\t Producto" +
