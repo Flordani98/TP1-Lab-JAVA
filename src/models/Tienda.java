@@ -71,8 +71,11 @@ public class Tienda {
     //endregion
 
     //region métodos de ALTA(COMPRA), BAJA, MODIFICACIÓN Y VENTA de productos
-    public void agregarProducto(Producto productoNuevo) { //seria lo mismo que comprar Productos, estariamos agregando productos a la tienda
+    public void comprarProducto(Producto productoNuevo, int unidades) { //seria lo mismo que comprar Productos, estariamos agregando productos a la tienda
 
+        ArrayList<String> mensajesCompra = new ArrayList<>();
+        productoNuevo.setStock(unidades);
+        //
         float importeTotalProducto = productoNuevo.calcularImporteTotalProducto();
 
         if(importeTotalProducto <= saldoCaja && !(excedeLimiteStockMaximo(productoNuevo.getStock()))){
@@ -141,7 +144,7 @@ public class Tienda {
                 }
 
                 productosVendidos.put(producto, unidadesVendidas);
-                totalVenta += (producto.getPrecio() * unidadesVendidas);
+                totalVenta += (producto.obtenerPrecioFinalVenta() * unidadesVendidas);
                 ventaRealizada = true;
 
             }
@@ -171,14 +174,14 @@ public class Tienda {
             if(esUnidadValida(unidades)){
 
                 if(unidades < producto.getStock()) {
-                    sumarSaldoCaja(unidades * producto.getPrecio());
+                    sumarSaldoCaja(unidades * producto.obtenerPrecioFinalVenta());
                     producto.setStock(producto.getStock() - unidades);
 
                     unidadesVendidas = unidades;
 
                 }else{
                     unidadesVendidas = producto.getStock();
-                    sumarSaldoCaja(unidadesVendidas * producto.getPrecio());
+                    sumarSaldoCaja(unidadesVendidas * producto.obtenerPrecioFinalVenta());
                     producto.setStock(0);
                     producto.setEstaDisponible(false);
 
@@ -201,12 +204,38 @@ public class Tienda {
 
     }
 
-    public void mostrarListaProductosStock(){
+    public void mostrarListaProductosVenta(){
+        //Los productos son entidades creadas por fuera de la tienda, por lo que guardan el precio costo, al que la
+        //tienda los compro.
+        //Para mostrar el precio de venta final sin modificar el precio costo del producto, guardo el precio
+        //costo en una variable y despues la asigno nuevamente. Se realiza de esta forma para no agregar a la clase
+        //Producto, el atributo "precioCosto"
+        float precioCosto = 0.0f;
+
+        System.out.println("-----------------------------------");
+        System.out.println("LISTA DE PRODUCTOS PARA LA VENTA");
+        for(Producto producto : this.listaProductosStock){
+            precioCosto = producto.getPrecio();
+            producto.setPrecio(producto.obtenerPrecioFinalVenta());
+            System.out.println("-----------------------------------");
+            System.out.println(producto);
+            System.out.println("-----------------------------------");
+            producto.setPrecio(precioCosto);
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    public void mostrarListaProductosComprados(){
+        //muestra los productos que la tienda COMPRO con el precio que lo compro.
+        System.out.println("-----------------------------------");
+        System.out.println("LISTA DE PRODUCTOS COMPRADOS");
         for(Producto producto : this.listaProductosStock){
             System.out.println("-----------------------------------");
             System.out.println(producto);
             System.out.println("-----------------------------------");
         }
+        System.out.println("*NOTA: PRECIO ES EL VALOR COSTO, es decir el valor al que la tienda compro el producto");
+        System.out.println("-----------------------------------");
     }
 
     //endregion
@@ -282,7 +311,7 @@ public class Tienda {
 
     //Venta
     public void imprimirDetalleLineaProducto(Producto producto, int unidades){
-        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + "u. x $" + producto.getPrecio());
+        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + "u. x $" + producto.obtenerPrecioFinalVenta());
     }
 
     public void imprimirDetalleVenta(Map<Producto, Integer> productosVendidos, float totalVenta, ArrayList<String> mensajesVenta){

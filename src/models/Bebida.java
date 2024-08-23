@@ -15,9 +15,9 @@ public class Bebida extends Comestible{
 
     //region constructores
 
-    public Bebida(String descripcion, int stock, float precio, float porcentajeGanancia, float graduacionAlcohol,
+    public Bebida(String descripcion, float precio, float graduacionAlcohol,
                   Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias, esImportado);
+        super(descripcion, precio,  fechaVencimiento, calorias, esImportado);
         this.graduacionAlcohol = graduacionAlcohol;
 
         super.setCodigo(generarCodigoProducto());

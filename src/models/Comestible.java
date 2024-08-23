@@ -14,10 +14,10 @@ public abstract class Comestible extends Producto{
 
     public Comestible(){}
 
-    public Comestible(String descripcion, int stock, float precio, float porcentajeGanancia, LocalDate fechaVencimiento,
+    public Comestible(String descripcion, float precio, LocalDate fechaVencimiento,
                       float calorias, boolean esImportado) {
 
-        super(descripcion, stock, precio, porcentajeGanancia);
+        super(descripcion, precio);
         this.fechaVencimiento = fechaVencimiento;
         this.calorias = calorias;
         this.esImportado = esImportado;
@@ -55,17 +55,21 @@ public abstract class Comestible extends Producto{
 
     }
 
-    public void aplicarImpuestoProductoImportado(){
-        float precioActual = super.getPrecio();
+    public float aplicarImpuestoProductoImportado(float precioProducto){
         if(this.esImportado){
-            super.setPrecio(precioActual + (precioActual * PORCENT_IMPUESTO_IMPORTACION / 100));
+            precioProducto = precioProducto + (precioProducto * PORCENT_IMPUESTO_IMPORTACION / 100);
         }
+        return precioProducto;
     }
 
     @Override
-    public void calcularPrecioFinal() {
-        aplicarImpuestoProductoImportado();
-        calcularPrecioFinalBase();
+    public float obtenerPrecioFinalVenta() {
+        float precioFinal = super.getPrecio();
+
+        precioFinal = aplicarImpuestoProductoImportado(precioFinal);
+        precioFinal = calcularPrecioFinalBase(precioFinal);
+
+        return precioFinal;
     }
 
 

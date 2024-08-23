@@ -17,10 +17,10 @@ public class Limpieza extends Producto{
 
 
     //region constructores
-    public Limpieza(String descripcion, int stock, float precio, float porcentajeGanancia,
+    public Limpieza(String descripcion, float precio,
                     TipoAplicacion tipoAplicacion) {
 
-        super(descripcion, stock, precio, porcentajeGanancia);
+        super(descripcion, precio);
 
         super.setCodigo(generarCodigoProducto());
         this.tipoAplicacion = tipoAplicacion;
@@ -77,8 +77,8 @@ public class Limpieza extends Producto{
     @Override
     public float aplicarPorcentajeGanancia(float porcentajeGanancia) {
         float porcentajeGananciaAplicado = 0.0f;
-        String mensaje = esTipoCocinaOMulituso() ? "El porcentaje de ganancia debe tener un minimo del %10 y no debe superar el %" + MAX_PORCENTAJE_GANANCIA
-                : "El porcentaje de ganancia no debe superar el %" + MAX_PORCENTAJE_GANANCIA;
+        String mensaje = esTipoCocinaOMulituso() ? "El porcentaje de ganancia no debe superar el %" + MAX_PORCENTAJE_GANANCIA
+                : "El porcentaje de ganancia debe tener un minimo del %10 y no debe superar el %" + MAX_PORCENTAJE_GANANCIA;
 
         if(porcentajeGanancia > 0){
             if(esValidoPorcentGanancia(porcentajeGanancia)){
@@ -97,8 +97,9 @@ public class Limpieza extends Producto{
 
 
     @Override
-    public void calcularPrecioFinal() {
-        calcularPrecioFinalBase();
+    public float obtenerPrecioFinalVenta() {
+        float precioFinal = super.getPrecio();
+        return calcularPrecioFinalBase(precioFinal);
     }
 
     @Override

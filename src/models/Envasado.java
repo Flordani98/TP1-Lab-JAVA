@@ -18,9 +18,9 @@ public class Envasado extends Comestible{
 
     //region constructores
 
-    public Envasado(String descripcion, int stock, float precio, float porcentajeGanancia, TipoEnvase tipoEnvase,
+    public Envasado(String descripcion, float precio, TipoEnvase tipoEnvase,
                     Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
-        super(descripcion, stock, precio, porcentajeGanancia, fechaVencimiento, calorias, esImportado);
+        super(descripcion, precio, fechaVencimiento, calorias, esImportado);
         this.tipoEnvase = tipoEnvase;
 
         super.setCodigo(generarCodigoProducto());

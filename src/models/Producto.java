@@ -17,12 +17,10 @@ public abstract class Producto {
     public Producto() {
     }
 
-    public Producto(String descripcion, int stock, float precio,
-                    float porcentajeGanancia){
+    //CONSTRUCTOR PARA "PROVEEDOR" DE PRODUCTOS
+    public Producto(String descripcion, float precio){
         this.descripcion = descripcion;
-        this.stock = stock;
         this.precio = precio;
-        this.porcentajeGanancia = porcentajeGanancia;
         this.estaDisponible = true;
 
     }
@@ -65,7 +63,6 @@ public abstract class Producto {
     }
 
     public float getPrecio() {
-        calcularPrecioFinal();
         return this.precio;
     }
 
@@ -137,22 +134,21 @@ public abstract class Producto {
     }
 
     public String formatearUnidadStock(){
-        return (this.stock > 1) ? " unidades" : " unidad";
+        return (this.stock > 1 || this.stock == 0) ? " unidades" : " unidad";
     }
 
-    protected void calcularPrecioFinalBase(){
-        float precioFinal = this.precio;
+    protected float calcularPrecioFinalBase(float precioFinal){
 
         if(this.porcentajeGanancia > 0){
-            precioFinal = this.precio + (this.precio * this.porcentajeGanancia / 100);
+            precioFinal = precioFinal + (precioFinal * this.porcentajeGanancia / 100);
         }
         if(this.porcentajeDescuento > 0){
-            precioFinal = this.precio - (this.precio * this.porcentajeDescuento / 100);
+            precioFinal = precioFinal - (precioFinal * this.porcentajeDescuento / 100);
         }
 
-        setPrecio(precioFinal);
+        return precioFinal;
     }
-    public abstract void calcularPrecioFinal();
+    public abstract float obtenerPrecioFinalVenta();
 
     //TODO: implementar equals y hashcode
     @Override
@@ -163,6 +159,7 @@ public abstract class Producto {
                 "\n Stock: " + stock + formatearUnidadStock() +
                 "\n Precio: $" + precio +
                 "\n Porcentaje Ganancia: %" + porcentajeGanancia +
+                "\n Porcentaje Descuento: %" + porcentajeDescuento +
                 "\n Esta Disponible: " + (estaDisponible ? "SÍ" : "NO");
     }
 }
