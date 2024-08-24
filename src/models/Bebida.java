@@ -19,6 +19,7 @@ public class Bebida extends Comestible{
                   Boolean esImportado, LocalDate fechaVencimiento, float calorias) {
         super(descripcion, precio,  fechaVencimiento, calorias, esImportado);
         this.graduacionAlcohol = graduacionAlcohol;
+        calcularCalorias();
 
         super.setCodigo(generarCodigoProducto());
 
@@ -56,7 +57,7 @@ public class Bebida extends Comestible{
             totalCalorias *= 1.25f;
         }
 
-        setCalorias(totalCalorias);
+        super.setCalorias(totalCalorias);
     }
 
     @Override

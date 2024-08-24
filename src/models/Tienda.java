@@ -1,6 +1,11 @@
 package models;
 
+import Tools.ColorConsola;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Tienda {
 
@@ -73,32 +78,24 @@ public class Tienda {
     //region métodos de ALTA(COMPRA), BAJA, MODIFICACIÓN Y VENTA de productos
     public void comprarProducto(Producto productoNuevo, int unidades) { //seria lo mismo que comprar Productos, estariamos agregando productos a la tienda
 
-        ArrayList<String> mensajesCompra = new ArrayList<>();
         productoNuevo.setStock(unidades);
         //
         float importeTotalProducto = productoNuevo.calcularImporteTotalProducto();
+
+        if(importeTotalProducto > saldoCaja){
+            System.out.println(ColorConsola.ROJO + "El producto no podrá ser agregado a la tienda por saldo insuficiente en la caja" + ColorConsola.RESET);
+        }
+
+        if(excedeLimiteStockMaximo(productoNuevo.getStock())){
+            System.out.println(ColorConsola.ROJO + "No se pueden agregar nuevos productos a la tienda ya que se alcanzó el máximo de stock"  + ColorConsola.RESET);
+        }
 
         if(importeTotalProducto <= saldoCaja && !(excedeLimiteStockMaximo(productoNuevo.getStock()))){
 
             descontarSaldoCaja(importeTotalProducto);
             this.listaProductosStock.add(productoNuevo);
-
-            if (productoNuevo instanceof Limpieza) {
-                this.listaProductosLimpieza.add(productoNuevo.getCodigo());
-            }
-            if(productoNuevo instanceof Bebida) {
-                this.listaProductosBebidas.add(productoNuevo.getCodigo());
-            }
-            if(productoNuevo instanceof Envasado){
-                this.listaProductosEnvasados.add(productoNuevo.getCodigo());
-            }
-
-        }else if(importeTotalProducto > saldoCaja){
-            System.out.println("El producto no podrá ser agregado a la tienda por saldo insuficiente en la caja");
-        }else{
-            System.out.println("No se pueden agregar nuevos productos a la tienda ya que se alcanzó el máximo de stock");
+            agregarProductoALaListaCorrespondiente(productoNuevo);
         }
-
 
     }
     public void eliminarProducto(Producto producto){
@@ -114,6 +111,7 @@ public class Tienda {
     }
     public void modificarProducto(){}
 
+    //VENTA utilizando SCANNER, ingresado de datos por consola
     public void venderProductos(ArrayList<Producto> productos){
 
         boolean ventaRealizada = false;
@@ -128,7 +126,7 @@ public class Tienda {
         System.out.println("-------------------------------");
         System.out.println("\t\tVENTA DE PRODUCTOS");
 
-        if(productos != null && validarCantidadProductosVenta(productos.size())){
+        if(productos != null && esValidoCantidadProductosVenta(productos.size())){
 
             for (Producto producto : productos) {
 
@@ -153,14 +151,56 @@ public class Tienda {
             }
 
         }else{
-            System.out.println("Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos");
+            System.out.println(ColorConsola.ROJO + "Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos" + ColorConsola.RESET);
         }
 
         scan.close();
 
     }
 
-    public boolean validarCantidadProductosVenta(int cantidadProductos){
+    //VENTA utilizando MAP para guardar el producto con las unidades solicitadas
+    public void venderProductos(Map<Producto, Integer> productos){
+
+        boolean ventaRealizada = false;
+        int unidadesVendidas = 0;
+        float totalVenta = 0;
+
+        Map<Producto, Integer> productosVendidos = new HashMap<>();
+        ArrayList<String> mensajesVenta = new ArrayList<>();
+
+        System.out.println("-------------------------------");
+        System.out.println("\t\tVENTA DE PRODUCTOS");
+
+        if(productos != null && esValidoCantidadProductosVenta(productos.size())){
+
+            for (Map.Entry<Producto, Integer> entrada : productos.entrySet()) {
+                Producto producto = entrada.getKey();
+                int unidadesSolicitadas = entrada.getValue();
+
+                unidadesVendidas = venderProducto(producto.getCodigo(), producto.getDescripcion(), unidadesSolicitadas, mensajesVenta);
+
+                if(unidadesVendidas == 0){
+                    break;
+                }
+
+                productosVendidos.put(producto, unidadesVendidas);
+                totalVenta += (producto.obtenerPrecioFinalVenta() * unidadesVendidas);
+                ventaRealizada = true;
+
+            }
+            if(ventaRealizada){
+                imprimirDetalleVenta(productosVendidos, totalVenta, mensajesVenta);
+            }
+
+        }else{
+            System.out.println(ColorConsola.ROJO + "Solo se puede realizar la venta de 1, 2 o 3 articulos. Ingrese de 1 a 3 productos" + ColorConsola.RESET);
+        }
+
+
+    }
+
+
+    public boolean esValidoCantidadProductosVenta(int cantidadProductos){
         return (cantidadProductos >=1 && cantidadProductos <=3);
     }
 
@@ -182,20 +222,21 @@ public class Tienda {
                 }else{
                     unidadesVendidas = producto.getStock();
                     sumarSaldoCaja(unidadesVendidas * producto.obtenerPrecioFinalVenta());
-                    producto.setStock(0);
+                    if(unidades != producto.getStock()){
+                        mensajesVenta.add(ColorConsola.ROJO + "Hay productos con stock disponible menor al solicitado" + ColorConsola.RESET);
+                    }
                     producto.setEstaDisponible(false);
-
-                    mensajesVenta.add("Hay productos con stock disponible menor al solicitado");
+                    producto.setStock(0);
                 }
             }
 
            else{
-                mensajesVenta.add("Unidad ingresada no valida. Por favor ingrese un número de unidad del 1 al 12");
+                mensajesVenta.add(ColorConsola.ROJO +"Unidad ingresada no valida. Por favor ingrese un número de unidad del 1 al 12" + ColorConsola.RESET);
 
             }
 
         }else{
-            mensajesVenta.add("El producto " + codigo + " " + descripcion.toUpperCase() + " no se encuentra disponible para la venta");
+            mensajesVenta.add(ColorConsola.ROJO + "El producto " + codigo + " " + descripcion.toUpperCase() + " no se encuentra disponible para la venta" + ColorConsola.RESET);
         }
 
 //        actualizarListaProductosDisponibles();
@@ -213,7 +254,7 @@ public class Tienda {
         float precioCosto = 0.0f;
 
         System.out.println("-----------------------------------");
-        System.out.println("LISTA DE PRODUCTOS PARA LA VENTA");
+        System.out.println(ColorConsola.AMARILLO + "\t\t\tLISTA DE PRODUCTOS PARA LA VENTA"+ ColorConsola.RESET );
         for(Producto producto : this.listaProductosStock){
             precioCosto = producto.getPrecio();
             producto.setPrecio(producto.obtenerPrecioFinalVenta());
@@ -228,13 +269,13 @@ public class Tienda {
     public void mostrarListaProductosComprados(){
         //muestra los productos que la tienda COMPRO con el precio que lo compro.
         System.out.println("-----------------------------------");
-        System.out.println("LISTA DE PRODUCTOS COMPRADOS");
+        System.out.println( ColorConsola.AMARILLO +"\t\t\tLISTA DE PRODUCTOS COMPRADOS"+ ColorConsola.RESET);
+        System.out.println(ColorConsola.VERDE + "*NOTA: PRECIO ES EL VALOR COSTO, es decir el valor al que la tienda compro el producto" + ColorConsola.RESET);
         for(Producto producto : this.listaProductosStock){
             System.out.println("-----------------------------------");
             System.out.println(producto);
             System.out.println("-----------------------------------");
         }
-        System.out.println("*NOTA: PRECIO ES EL VALOR COSTO, es decir el valor al que la tienda compro el producto");
         System.out.println("-----------------------------------");
     }
 
@@ -310,21 +351,24 @@ public class Tienda {
     }
 
     //Venta
-    public void imprimirDetalleLineaProducto(Producto producto, int unidades){
+    public void imprimirDetalleLineaProductoVenta(Producto producto, int unidades){
         System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + "u. x $" + producto.obtenerPrecioFinalVenta());
+    }
+    public void imprimirDetalleLineaProductoCompra(Producto producto, int unidades){
+        System.out.println(producto.getCodigo() + " " + producto.getDescripcion() + " " + unidades + "u. x $" + producto.getPrecio() + " = $" + unidades*producto.getPrecio());
     }
 
     public void imprimirDetalleVenta(Map<Producto, Integer> productosVendidos, float totalVenta, ArrayList<String> mensajesVenta){
         System.out.println("----------------------------------");
-        System.out.println("\t\t DETALLE DE VENTA");
+        System.out.println( ColorConsola.AMARILLO + "\t\t DETALLE DE VENTA" + ColorConsola.RESET);
         System.out.println("----------------------------------");
-        productosVendidos.forEach(this::imprimirDetalleLineaProducto);
+        productosVendidos.forEach(this::imprimirDetalleLineaProductoVenta);
 
         System.out.println("----------------------------------");
         mensajesVenta.forEach(System.out::println);
         System.out.println("----------------------------------");
 
-        System.out.println("TOTAL VENTA: $" + totalVenta);
+        System.out.println(ColorConsola.VERDE + "TOTAL VENTA: $" + totalVenta + ColorConsola.RESET);
         System.out.println("----------------------------------\n");
 
     }
@@ -343,14 +387,14 @@ public class Tienda {
             if(porcentajeDescuento > 0){
                 descuentoAplicado = producto.aplicarDescuento(porcentajeDescuento);
                 if(descuentoAplicado > 0){
-                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() +
-                            " un descuento del %" + descuentoAplicado);
+                    System.out.println(ColorConsola.VERDE +"Se ha aplicado al producto con codigo " + producto.getCodigo() +
+                            " un descuento del %" + descuentoAplicado + ColorConsola.RESET);
                 }
             }else{
-                System.out.println("El porcentaje de descuento debe ser mayor a 0");
+                System.out.println(ColorConsola.ROJO +"El porcentaje de descuento debe ser mayor a 0" + ColorConsola.RESET);
             }
         }else{
-            System.out.println("Producto no encontrado, por favor verifique el código ingresado");
+            System.out.println(ColorConsola.ROJO + "Producto no encontrado, por favor verifique el código ingresado" + ColorConsola.RESET);
         }
     }
 
@@ -365,14 +409,31 @@ public class Tienda {
             if(porcentajeGanancia > 0){
                 porcGananciaAplicado = producto.aplicarPorcentajeGanancia(porcentajeGanancia);
                 if(porcGananciaAplicado > 0){
-                    System.out.println("Se ha aplicado al producto con codigo " + producto.getCodigo() +
-                            " un porcentaje de ganancia del %" + porcGananciaAplicado);
+                    System.out.println(ColorConsola.VERDE + "Se ha aplicado al producto con codigo " + producto.getCodigo() +
+                            " un porcentaje de ganancia del %" + porcGananciaAplicado + ColorConsola.RESET);
                 }
             }else{
-                System.out.println("El porcentaje de ganancia debe ser mayor a 0");
+                System.out.println(ColorConsola.ROJO + "El porcentaje de ganancia debe ser mayor a 0" + ColorConsola.RESET);
             }
         }else{
-            System.out.println("Producto no encontrado, por favor verifique el código ingresado");
+            System.out.println(ColorConsola.ROJO + "Producto no encontrado, por favor verifique el código ingresado" + ColorConsola.RESET);
+        }
+    }
+
+    public void mostrarDatosTienda(){
+        System.out.println("---------------------------");
+        System.out.println("\t\t\tMI TIENDA");
+        System.out.println(this);
+        System.out.println("---------------------------");
+    }
+
+    private void agregarProductoALaListaCorrespondiente(Producto producto) {
+        if (producto instanceof Limpieza) {
+            this.listaProductosLimpieza.add(producto.getCodigo());
+        } else if (producto instanceof Bebida) {
+            this.listaProductosBebidas.add(producto.getCodigo());
+        } else if (producto instanceof Envasado) {
+            this.listaProductosEnvasados.add(producto.getCodigo());
         }
     }
 
@@ -382,6 +443,6 @@ public class Tienda {
         return "\t\t\t Tienda" +
                 "\n Nombre: " + nombre +
                 "\n Stock Máximo: " + stockMax +
-                "\n Saldo de Caja: " + saldoCaja;
+                "\n Saldo de Caja: $" + saldoCaja;
     }
 }

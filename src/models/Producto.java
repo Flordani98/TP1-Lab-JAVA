@@ -115,7 +115,7 @@ public abstract class Producto {
                 descuentoAplicado = porcentajeDescuento;
             }else{
                 System.out.println("El porcentaje de descuento para el tipo de producto " + tipoProducto +
-                        "no tiene que ser mayor a %" + maxDescuento);
+                        " no tiene que ser mayor al %" + maxDescuento);
             }
         }else{
             //realizo la validación de si porcentajeDescuento es mayor a 0 ACÁ y en TIENDA, ya que no sé si en algun
